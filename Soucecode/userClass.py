@@ -5,7 +5,7 @@ class User():
     def __init__(self) -> None:
         self.userName        = ""
         self.permissionLevel = ""
-        self.loginStatus     = ""
+        self.loginStatus     = False
         
     def validateUserName(self, inputName):
         # Creating a pattern using the Regular Expressions(RE) library
@@ -26,8 +26,22 @@ class User():
         else:
             return False
             
+    def setExistingPermissionLevel(self, cursor, inputName):
+        cursor.execute("SELECT permissionLevel FROM users WHERE userName = ?", (inputName,))
+        result = cursor.fetchone()
+        self.permissionLevel = result     
+            
     def setExistingUserName(self, inputName):
         self.userName = inputName
         
+    def setLoginStatus(self, loginStatus):
+        self.loginStatus = loginStatus
+        
     def getUserName(self):
         return self.userName
+    
+    def getPermissionLevel(self):
+        return self.permissionLevel
+    
+    def getLoginStatus(self):
+        return self.loginStatus

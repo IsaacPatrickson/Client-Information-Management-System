@@ -1,5 +1,6 @@
 import sqlite3
 import time
+import pandas as pd
 from SQLiteDatabase.InitDatabase import *
 from userClass import *
 
@@ -39,6 +40,7 @@ def login_menu():
                 if login.validateUserName(inputName):
                     if login.isUserNameInTable(cursor, inputName):
                         login.setExistingUserName(inputName)
+                        login.setLoginStatus(True)
                         print(f"Welcome, {inputName}")
                         userNameInput = True
                     else:
@@ -50,6 +52,28 @@ def login_menu():
                     else:
                         print("Characters must belong to the alphabet (spaces included)")
                         time.sleep(3)
+            
+            while login.getLoginStatus() == True:
+                print(pd.read_sql_query("SELECT * FROM users", connection))
+                # # Fetch the table data
+                # cursor.execute("SELECT * FROM users")
+                # rows = cursor.fetchall()
+
+                # # Fetch the column names
+                # column_names = [description[0] for description in cursor.description]
+
+                # # Print the column names
+                # print(" | ".join(column_names))
+                # print("-" * (len(column_names) * 10))
+
+                # # Print each row
+                # for row in rows:
+                #     print(" | ".join(str(item) for item in row))
+                
+                break
+                # login.setExistingPermissionLevel(cursor, inputName)
+                # if login.getPermissionLevel() == 9:
+                # elif login.getPermissionLevel() == 1:
             
             
             
