@@ -7,17 +7,6 @@ class User():
         self.permissionLevel    = []
         self.loginStatus        = False
         
-    def validateUserName(self, inputName):
-        # Creating a pattern using the Regular Expressions(RE) library
-        # The pattern includes all letters of the alphabet (uppercase and lowercase) and blank spaces
-        pattern = r'^[a-zA-Z\s]+$'
-        
-        # Using the RE library, I have check if the input matches the pattern
-        if re.match(pattern, inputName):
-            return True
-        else:
-            return False
-        
     def isUserNameInTable(self, result):
         # cursor.execute("SELECT userName FROM users WHERE userName = ?", (inputName,))
         # result = cursor.fetchone()
@@ -45,3 +34,15 @@ class User():
     
     def getLoginStatus(self):
         return self.loginStatus
+    
+    
+def validateUserName(inputName):
+    # Creating a pattern using the Regular Expressions(RE) library
+    # The pattern includes all letters of the alphabet (uppercase and lowercase) and blank spaces
+    pattern = r'^[a-zA-Z\s]+$'
+    
+    # Using the RE library, I have check if the input matches the pattern
+    if re.match(pattern, inputName):
+        return True
+    else:
+        return False

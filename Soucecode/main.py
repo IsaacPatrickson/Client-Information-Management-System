@@ -30,26 +30,25 @@ def login_menu():
         print(" 0. Quit")
         print()
         choice = input("Select 1 or 0: ")
-        
         if choice == "1":
             loginMenuValid = True
-            
             login = User()
             userNameInput = False
             while userNameInput == False:
                 inputName = input("(Enter '0' to Abort) Enter your username: ")
-                if login.validateUserName(inputName):
+                if validateUserName(inputName):
                     if login.isUserNameInTable(selectAttribute(cursor, "userName", "users", "userName", inputName)):
+                        userNameInput = True
                         login.setExistingUserName(inputName)
                         login.setLoginStatus(True)
                         print(f"Welcome to the Client Information Management System, {inputName}")
-                        userNameInput = True
                     else:
                         print("The entered username is not in our database")
                         time.sleep(3)
                 else:
                     if inputName == "0":
-                        login_menu()
+                        userNameInput = True
+                        loginMenuValid = False
                     else:
                         print("Characters must belong to the alphabet (spaces included)")
                         time.sleep(3)
@@ -60,6 +59,7 @@ def login_menu():
                 
                 print()
                 print()
+                time.sleep(2)
                 print(clientsTable)
                 permissionValues = selectAttribute(cursor, "permissionLevel", "users", "userName", inputName)
                 for permissionValue in permissionValues:
@@ -67,24 +67,25 @@ def login_menu():
                 
 
                 permissionLevel = login.getPermissionLevel()
+                
                 if permissionLevel == 9:
-                    choice = []
-                    print()
-                    print()
-                    print("ADMIN MENU")
-                    print()
-                    print("(1) Amend client information")
-                    print("(2) Add a client")
-                    print("(3) Delete a client")
-                    print("(4) Search for clients")
-                    print("(0) Log out")
-                    print()
                     validChoice = False
                     while validChoice == False:
-                        choice = int(input("Enter (0-4) to select an option: "))
+                        choice = []
+                        print()
+                        print()
+                        print("ADMIN MENU")
+                        print()
+                        print("(1) Amend client information")
+                        print("(2) Add a client")
+                        print("(3) Delete a client")
+                        print("(4) Search for clients")
+                        print("(0) Log out")
+                        print()
+                        choice = input("Enter (0-4) to select an option: ")
                         if choice == "1":
                             validChoice = True
-                            print("Amend")
+                            ammendClients()
                         elif choice == "2":
                             validChoice = True
                             print("Add")
@@ -93,7 +94,7 @@ def login_menu():
                             print("Remove")  
                         elif choice == "4":
                             validChoice = True
-                            print("Search")
+                            searchClients()
                         elif choice == "0":
                             validChoice = True
                             print()
@@ -104,7 +105,6 @@ def login_menu():
                         
                         
                 elif permissionLevel == 1:
-                    
                     validChoice = False
                     while validChoice == False:
                         choice = []
@@ -116,44 +116,9 @@ def login_menu():
                         print("(0) Log out")
                         print()
                         choice = input("Enter (0-1) to select an option: ")
-                        
-                        
                         if choice == "1":
                             validChoice = True
-                            
-                            searchOptionValid = False
-                            while searchOptionValid == False:
-                                print()
-                                print()
-                                print("SEARCH FOR CLIENTS")
-                                print()
-                                print("To abort enter '0'")
-                                attributeToSearchBy = input("Enter the attribute you want to search by: ")
-                                if attributeToSearchBy == "0":
-                                    searchOptionValid = True
-                                elif validateAttributeToSeachBy(cursor, attributeToSearchBy) == True:
-                                    valueToSearchFor = input("Enter the value this attribute needs to have: ")
-                                    searchResults = str(selectAttributesWithPandas(pd, connection, "*", "clients", attributeToSearchBy, valueToSearchFor))
-                                    if "Empty DataFrame" not in searchResults:
-                                        print()
-                                        print(searchResults)
-                                    else:
-                                        print()
-                                        print("No results match that search")
-                                elif validateAttributeToSeachBy(cursor, attributeToSearchBy) == False:
-                                    print("The attribute you have selected does not exist as a column in the clients table")
-                                else:
-                                    print("Invalid attribute name! Enter '0' to abort")
-                                    
-                                    
-                            # print(validSearchAttribute)
-                            # valueToSearchFor = input("Enter the value this attribute needs to have: ")
-                            # # print()                    
-                            # searchResults = selectAttributesWithPandas(pd, connection, "*", "clients", attributeToSearchBy, valueToSearchFor)
-                            # print(searchResults)
-                            
-                            
-                            
+                            searchClients()                                                
                         elif choice == "0":
                             validChoice = True
                             print()
@@ -167,73 +132,121 @@ def login_menu():
                         
                         
             
-            
-            # if login.setExistingUserName(login.isUserNameInTable(cursor, inputName), inputName):
-            #     print(f"Welcome, {inputName}")
-            # else:
-            #     pass
-                
-            # if login.validateUserName(inputName):
-            #     try:
-            #         login.isUserNameInTable(cursor, inputName)
-            #     except sqlite3.OperationalError as e:
-            #         print(f"An error occurred: {e}")
-            # else:
-            #     print("Invalid name! Please enter only alphabetic characters and spaces.")
-            
-            # print(login.getUserName)
-            #         print()
-            #         login.set_email(input("Email address: "))
-            #         userEmail = login.get_email()
-            #         query = "SELECT salt FROM user WHERE email = %s"
-            #         cursor.execute(query, (userEmail,))
-            #         for salt in cursor:
-            #             userSalt = ("{}".format(salt))
-            #             userSalt = userSalt.replace("'","")
-            #             userSalt = userSalt.replace("(","")
-            #             userSalt = userSalt.replace(")","")
-            #             userSalt = userSalt.replace(",","")
-            #         query = "SELECT passwordHash FROM user WHERE email = %s"
-            #         cursor.execute(query, (userEmail,))
-            #         for passwordHash in cursor:
-            #             userHPassword = ("{}".format(passwordHash))
-            #             userHPassword = userHPassword.replace("'","")
-            #             userHPassword = userHPassword.replace("(","")
-            #             userHPassword = userHPassword.replace(")","")
-            #             userHPassword = userHPassword.replace(",","")
-            #         check = check_password(userSalt, userHPassword, input("Password: "))
-            #         break
-            # #     # If the email entered does not exist and a salt cannot be selected,
-            # #     # the error will be dealt with using exception handling
-                # except:
-                #     print("Error! An account with this email does not exist")
-                #     print()
-                #     login_menu()
-
-            # # If the email does exist in the database and the passwords match,
-            # # the user is sent to the User Menu        
-            # if check == True:
-            #     email = login.get_email()
-            #     login.set_user_id(email)
-            #     name = name_selector(login.get_user_id())
-            #     print()
-            #     print("Login Successful")
-            #     print("Welcome,", name)
-            #     user_menu(login.get_email(), login.get_user_id())
-
-            # If the password does not match, the user is sent back to the Login Menu    
-            # else:
-            #     print("Error! Incorrect username")
-            #     print()
-            #     login_menu()
                 
         # If the User has chosen to exit the program, the program will close    
         elif choice == "0":
             loginMenuValid = True
-            exit()
+            break
             
         else:
-            print("Error! Input must be an integer (0-1)")   
+            print("Error! Input must be an integer (0-1)")
+            time.sleep(3)
+            
+    # Committing all changes to the database
+    connection.commit()
+
+    # Close connection
+    connection.close()
+    exit()
+    
+def searchClients():
+    searchOptionValid = False
+    while searchOptionValid == False:
+        print()
+        print()
+        print("SEARCH FOR CLIENTS")
+        print()
+        print("To abort enter '0'")
+        attributeToSearchBy = input("Enter the attribute you want to search by: ")
+        if attributeToSearchBy == "0":
+            searchOptionValid = True
+        elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == True:
+            valueToSearchFor = input("Enter the value this attribute needs to have: ")
+            searchResults = str(selectAttributesWithPandas(pd, connection, "*", "clients", attributeToSearchBy, valueToSearchFor))
+            if "Empty DataFrame" not in searchResults:
+                print()
+                print(searchResults)
+                time.sleep(2)
+            else:
+                print()
+                print("No results match that search")
+        elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == False:
+            print("The attribute you have selected does not exist as a column in the clients table")
+        else:
+            print(f"{attributeToSearchBy} is an invalid attribute name! Enter '0' to abort")        
+    
+def ammendClients():
+    ammendOptionValid = False
+    while ammendOptionValid == False:
+        print()
+        print()
+        print("AMEND CLIENT INFORMATION")
+        print()
+        print("To abort enter '0'")
+               
+        iDofClientToAmend = input("Enter the clientID of the details you want to amend: ")
+        if iDofClientToAmend == "0":
+            ammendOptionValid = True
+            
+        elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToAmend) == True:
+            fieldToModify = input("Select an attribute to modify: ")
+            if fieldToModify == "clientID":
+                print()
+                print(f"{fieldToModify} is the primary key, this cannot be modified")
+                
+                
+            elif attributeNameMatchClientColumnName(cursor, fieldToModify):
+                replacementValue = input("Input the replacement value: ")
+                if compareDatatypes(cursor, replacementValue, "clients", fieldToModify):
+                    replaceAttribute(cursor, "clients", fieldToModify, replacementValue, "clientID", iDofClientToAmend)
+                    print()
+                    print("Attribute amended successfully")
+                    time.sleep(2)
+                    ammendOptionValid = True
+                else:               
+                    print(f"The datatype of {replacementValue} does not match the datatype of that field")
+        elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToAmend) == False:
+            print(f"{iDofClientToAmend} does not exist as a clientID in the clients table")
+        else:
+            print(f"{iDofClientToAmend} is an invalid clientID! A clientID must be an integer")
+       
+       
+       
+       
+def compareDatatypes(cursor, inputValue, tableName, columnName):
+    columnDatatype = getColumnDataType(cursor, tableName, columnName)
+    
+    datatypeMap = {
+        "INTEGER": int,
+        "BOOLEAN": int,
+        "TEXT": str,
+        "REAL": float,
+        "BLOB": bytes,
+        "NUMERIC": float
+    }
+    
+    convertedInputValue = detectAndConvertInput(inputValue)
+    
+    inputDatatype = type(convertedInputValue)
+    
+    if inputDatatype == datatypeMap.get(columnDatatype.upper()):
+        return True
+    else:
+        return False               
+                   
+def detectAndConvertInput(inputValue):
+    try:
+        # Tries to convert the input to an integer
+        convertedValue = int(inputValue)
+        return convertedValue
+    except ValueError:
+        # If conversion fails, try to convert to float
+        try:
+            convertedValue = float(inputValue)
+            return convertedValue
+        except ValueError:
+            # If both conversions fail, return the original input (assumed to be a string)
+            return inputValue            
     
     
     
@@ -242,8 +255,3 @@ def login_menu():
 login_menu()
     
     
-# Committing all changes to the database
-connection.commit()
-
-# Close connection
-connection.close()
