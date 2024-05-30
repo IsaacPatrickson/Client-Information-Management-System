@@ -45,6 +45,8 @@ def login_menu():
                         userNameInput = True
                         login.setExistingUserName(inputName)
                         login.setLoginStatus(True)
+                        print("Login successful")
+                        print()
                         print(f"Welcome to the Client Information Management System, {inputName}")
                     else:
                         print("An error occurred: The entered username is not in our database")
@@ -52,6 +54,7 @@ def login_menu():
                     if inputName == "0":
                         userNameInput = True
                         loginMenuValid = False
+                        print("Login aborted")
                     else:
                         print("An error occurred: Username must contain alpha characters (spaces included)")
             
@@ -99,6 +102,7 @@ def login_menu():
                         elif choice == "0":
                             validChoice = True
                             print()
+                            print("Log out successful")
                             login.setLoginStatus(False)
                         else:
                             print("An error occurred: Input must be an integer between (0-4)")
@@ -128,8 +132,19 @@ def login_menu():
             loginMenuValid = False
         # If the User has chosen to exit the program, the program will close    
         elif choice == "0":
-            loginMenuValid = True
-            break   
+            sureValid = False
+            while sureValid == False:
+                isUserSure = input("You are okay with exiting the system (Y/N): ")
+                if isUserSure.upper() == "Y":
+                    sureValid = True
+                    loginMenuValid = True
+                    break
+                elif isUserSure.upper() == "N":
+                    sureValid = True
+                    print()
+                    print("Exit aborted")
+                else:
+                    print(f"An error occurred: {isUserSure} is not 'Y' or 'N'")
         else:
             print("An error occurred: Input must be an integer (0-1)")
             
@@ -138,6 +153,7 @@ def login_menu():
 
     # Close connection
     connection.close()
+    print("System exit successful")
     exit()
         
             
@@ -152,6 +168,7 @@ def amendClientInformation():
         iDofClientToAmend = input("Enter the clientID of the details you want to amend: ")
         if iDofClientToAmend == "0":
             ammendOptionValid = True
+            print("Amend process aborted")
             
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToAmend) == True:
             fieldToModify = input("Select an attribute to modify: ")
@@ -213,7 +230,7 @@ def addClient():
                     answerValid = True
                     abort = True
                     print()
-                    print("Adding a new client aborted")
+                    print("Add process aborted")
                 elif len(answer) > 60:
                     print("The length of each answer must be below 60 characters")
                 elif compareDatatypes(cursor, answer, "clients", ColQuestionMethod[0]):
@@ -236,6 +253,7 @@ def addClient():
                             clientToAdd.getHqLatitude(),
                             clientToAdd.getEstimatedTotalRevenue()]
             insertInto(cursor, "clients", columnNames, answerValues)
+            print("Client successfully added to table")
             addProcessComplete = True
        
 def removeClient():
@@ -253,7 +271,20 @@ def removeClient():
             print("Delete process aborted")
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToRemove) == True:
             removeOptionValid = True
-            removeRecord(cursor, "clients", "clientID", iDofClientToRemove)
+            sureValid = False
+            while sureValid == False:
+                isUserSure = input("You are okay with this record being permanently deleted from the database (Y/N): ")
+                if isUserSure.upper() == "Y":
+                    sureValid = True
+                    removeRecord(cursor, "clients", "clientID", iDofClientToRemove)
+                    print("Client successfully deleted from the database")
+                elif isUserSure.upper() == "N":
+                    sureValid = True
+                    print()
+                    print("Delete process aborted")
+                else:
+                    print(f"An error occurred: {isUserSure} is not 'Y' or 'N'")
+                    
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToRemove) == False:
             print(f"An error occurred: {iDofClientToRemove} does not exist as a clientID in the clients table")
         else:
@@ -270,10 +301,13 @@ def searchClients():
         attributeToSearchBy = input("Enter the attribute you want to search by: ")
         if attributeToSearchBy == "0":
             searchOptionValid = True
+            print("Search process aborted")
         elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == True:
             valueToSearchFor = input("Enter the value this attribute needs to have: ")
             searchResults = str(selectAttributesWithPandas(pd, connection, "*", "clients", attributeToSearchBy, valueToSearchFor))
             if "Empty DataFrame" not in searchResults:
+                print()
+                print("Search successfull")
                 print()
                 print(searchResults)
             else:
@@ -325,7 +359,6 @@ def getMethodNamesInOrder(className):
                and not node.name.startswith('__')
                and not node.name.startswith('get')]
     return methods
-    
     
     
 login_menu()
