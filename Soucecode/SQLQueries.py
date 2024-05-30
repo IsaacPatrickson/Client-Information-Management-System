@@ -69,3 +69,7 @@ def getColumnDataType(cursor, tableName, columnName):
 def insertInto(cursor, tableName, columns, values):
     query = f"INSERT INTO {tableName} ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in values])})"
     cursor.execute(query, values)
+    
+def removeRecord(cursor, tableName, column, value):
+    query = f"DELETE FROM {tableName} WHERE {column} = ?"
+    cursor.execute(query, (value,))

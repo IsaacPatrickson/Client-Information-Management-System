@@ -63,7 +63,7 @@ def login_menu():
                 
                 print()
                 print()
-                time.sleep(2)
+                time.sleep(1)
                 print(clientsTable)
                 permissionValues = selectAttribute(cursor, "permissionLevel", "users", "userName", inputName)
                 for permissionValue in permissionValues:
@@ -72,7 +72,7 @@ def login_menu():
 
                 permissionLevel = login.getPermissionLevel()
                 
-                if permissionLevel == 9:
+                if permissionLevel >= 5:
                     validChoice = False
                     while validChoice == False:
                         choice = []
@@ -93,11 +93,11 @@ def login_menu():
                         elif choice == "2":
                             validChoice = True
                             addClient()
-                            
-                            
                         elif choice == "3":
                             validChoice = True
-                            print("Remove")  
+                            removeClient()
+                            
+                            
                         elif choice == "4":
                             validChoice = True
                             searchClients()
@@ -110,7 +110,7 @@ def login_menu():
                             time.sleep(3)
                         
                         
-                elif permissionLevel == 1:
+                elif permissionLevel < 5:
                     validChoice = False
                     while validChoice == False:
                         choice = []
@@ -154,33 +154,8 @@ def login_menu():
     # Close connection
     connection.close()
     exit()
-    
-def searchClients():
-    searchOptionValid = False
-    while searchOptionValid == False:
-        print()
-        print()
-        print("SEARCH FOR CLIENTS")
-        print()
-        print("To abort enter '0'")
-        attributeToSearchBy = input("Enter the attribute you want to search by: ")
-        if attributeToSearchBy == "0":
-            searchOptionValid = True
-        elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == True:
-            valueToSearchFor = input("Enter the value this attribute needs to have: ")
-            searchResults = str(selectAttributesWithPandas(pd, connection, "*", "clients", attributeToSearchBy, valueToSearchFor))
-            if "Empty DataFrame" not in searchResults:
-                print()
-                print(searchResults)
-                time.sleep(2)
-            else:
-                print()
-                print("No results match that search")
-        elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == False:
-            print("The attribute you have selected does not exist as a column in the clients table")
-        else:
-            print(f"{attributeToSearchBy} is an invalid attribute name! Enter '0' to abort")        
-    
+        
+            
 def amendClientInformation():
     ammendOptionValid = False
     while ammendOptionValid == False:
@@ -275,8 +250,53 @@ def addClient():
                             clientToAdd.getEstimatedTotalRevenue()]
             insertInto(cursor, "clients", columnNames, answerValues)
             addProcessComplete = True
+       
+def removeClient():
+    removeOptionValid = False
+    while removeOptionValid == False:
+        print()
+        print()
+        print("REMOVE CLIENT INFORMATION")
+        print()
+        print("To abort enter '0'")
+        iDofClientToRemove = input("Enter the clientID of the details you want to remove: ")
+        if iDofClientToRemove == "0":
+            removeOptionValid = True
+            print()
+            print("Delete process aborted")
+        elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToRemove) == True:
+            removeOptionValid = True
+            removeRecord(cursor, "clients", "clientID", iDofClientToRemove)
+        elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToRemove) == False:
+            print(f"{iDofClientToRemove} does not exist as a clientID in the clients table")
+        else:
+            print(f"{iDofClientToRemove} is an invalid clientID! A clientID must be an integer")
               
-        
+def searchClients():
+    searchOptionValid = False
+    while searchOptionValid == False:
+        print()
+        print()
+        print("SEARCH FOR CLIENTS")
+        print()
+        print("To abort enter '0'")
+        attributeToSearchBy = input("Enter the attribute you want to search by: ")
+        if attributeToSearchBy == "0":
+            searchOptionValid = True
+        elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == True:
+            valueToSearchFor = input("Enter the value this attribute needs to have: ")
+            searchResults = str(selectAttributesWithPandas(pd, connection, "*", "clients", attributeToSearchBy, valueToSearchFor))
+            if "Empty DataFrame" not in searchResults:
+                print()
+                print(searchResults)
+                time.sleep(2)
+            else:
+                print()
+                print("No results match that search")
+        elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == False:
+            print("The attribute you have selected does not exist as a column in the clients table")
+        else:
+            print(f"{attributeToSearchBy} is an invalid attribute name! Enter '0' to abort")   
 
     
             
