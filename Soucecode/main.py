@@ -356,8 +356,8 @@ def getMethodNamesInOrder(className):
     tree = ast.parse(source)
     methods = [node.name for node in tree.body[0].body 
                if isinstance(node, ast.FunctionDef) 
-               and not node.name.startswith('__')
-               and not node.name.startswith('get')]
+               and not node.name.startswith("__")
+               and not node.name.startswith("get")]
     return methods
     
     

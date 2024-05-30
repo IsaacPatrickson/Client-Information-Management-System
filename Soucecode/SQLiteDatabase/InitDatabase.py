@@ -64,25 +64,36 @@ def hardcodeValues(cursor, populated):
             ('Jasper Doe', 8),
             ('Jessie Doe', 1)
         ]
-        query = f"INSERT INTO {"users"} ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in columns])})"
-        cursor.executemany(query, rows)
+        for row in rows:
+            query = f"INSERT INTO users ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in columns])})"
+            try:
+                cursor.execute(query, row)
+            except:
+                print("Hardcoded values corrupted, corrupted records may be skipped")
+               
                
         # Add to clients
         columns = ["clientName", "contractStatus", "contractStartDate", "contractEndDate", "projectWork", "hqLongitude", "hqLatitude", "estimatedTotalRevenue"]
         rows = [
-            ('VetPartners', "1", '25-03-2024', '', "1", 53.98797, -1.10369, 650000.00),
-            ('SouthernWater', "1", '12-02-2023', '17-08-2024', "0", 50.82407, -0.42637, 750000.00),
-            ('Stonebridge', "1", '02-02-2024', '15-06-2025', "1", 158.0954, 7.6217, 200000.00),
-            ('DCC Propane', "0", '01-06-2022', '26-07-2023', "1", 32.4100, 9.0015, 150000.00),
-            ('Reconomy', "1", '04-01-2024', '15-01-2025', "1", 81.5597, -82.9807, 125000.00),
-            ('LEGO', "0", '15-06-2024', '', "0", -138.1759, -15.8445, 900000.00),
-            ('SkipsandBins', "1", '11-10-2023', '04-09-2024', "0", 141.7670, 9.2339, 75000.00),
-            ('Altus', "0", '05-05-2023', '22-01-2024', "0", 69.9109, -5.7904, 30000.00),
-            ('Serios Group', "1", '27-06-2024', '', "1", -28.2190, 33.1939, 75000.00),
-            ('Zentia', "1", '19-04-2023', '', "1", 97.0081, 3.3163, 500000.00)
+            ('VetPartners', '1', '25-03-2024', '', '1', 53.98797, -1.10369, 650000.00),
+            ('SouthernWater', '1', '12-02-2023', '17-08-2024', '0', 50.82407, -0.42637, 750000.00),
+            ('Stonebridge', '1', '02-02-2024', '15-06-2025', '1', 158.0954, 7.6217, 200000.00),
+            ('DCC Propane', '0', '01-06-2022', '26-07-2023', '1', 32.4100, 9.0015, 150000.00),
+            ('Reconomy', '1', '04-01-2024', '15-01-2025', '1', 81.5597, -82.9807, 125000.00),
+            ('LEGO', '0', '15-06-2024', '', '0', -138.1759, -15.8445, 900000.00),
+            ('SkipsandBins', '1', '11-10-2023', '04-09-2024', '0', 141.7670, 9.2339, 75000.00),
+            ('Altus', '0', '05-05-2023', '22-01-2024', '0', 69.9109, -5.7904, 30000.00),
+            ('Serios Group', '1', '27-06-2024', '', '1', -28.2190, 33.1939, 75000.00),
+            ('Zentia', '1', '19-04-2023', '', '1', 97.0081, 3.3163, 500000.00)
         ]
-        query = f"INSERT INTO {"clients"} ({', '.join(columns)}) VALUES ({', '.join(['?' for _ in columns])})"
-        cursor.executemany(query, rows)
+        for row in rows:
+            query = f"INSERT INTO clients ({', '.join(columns)}) VALUES ({", ".join(['?' for _ in columns])})"
+            try:
+                cursor.execute(query, row)
+            except:
+                print("Hardcoded values corrupted, corrupted records may be skipped")
+                    
+                    
         
 def checkTableContents(cursor):
     cursor.execute("SELECT * FROM users")
