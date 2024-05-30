@@ -1,6 +1,6 @@
 import sqlite3
-import time
 import pandas as pd
+import re
 from itertools import zip_longest
 import inspect
 import ast
@@ -40,22 +40,20 @@ def login_menu():
             userNameInput = False
             while userNameInput == False:
                 inputName = input("(Enter '0' to Abort) Enter your username: ")
-                if validateUserName(inputName):
+                if validateUserName(re, inputName):
                     if login.isUserNameInTable(selectAttribute(cursor, "userName", "users", "userName", inputName)):
                         userNameInput = True
                         login.setExistingUserName(inputName)
                         login.setLoginStatus(True)
                         print(f"Welcome to the Client Information Management System, {inputName}")
                     else:
-                        print("The entered username is not in our database")
-                        time.sleep(3)
+                        print("An error occurred: The entered username is not in our database")
                 else:
                     if inputName == "0":
                         userNameInput = True
                         loginMenuValid = False
                     else:
-                        print("Characters must belong to the alphabet (spaces included)")
-                        time.sleep(3)
+                        print("An error occurred: Username must contain alpha characters (spaces included)")
             
             while login.getLoginStatus() == True:
                 permissionLevel = []
@@ -63,7 +61,6 @@ def login_menu():
                 
                 print()
                 print()
-                time.sleep(1)
                 print(clientsTable)
                 permissionValues = selectAttribute(cursor, "permissionLevel", "users", "userName", inputName)
                 for permissionValue in permissionValues:
@@ -96,8 +93,6 @@ def login_menu():
                         elif choice == "3":
                             validChoice = True
                             removeClient()
-                            
-                            
                         elif choice == "4":
                             validChoice = True
                             searchClients()
@@ -106,8 +101,7 @@ def login_menu():
                             print()
                             login.setLoginStatus(False)
                         else:
-                            print("Input must be an integer between (0-4)")
-                            time.sleep(3)
+                            print("An error occurred: Input must be an integer between (0-4)")
                         
                         
                 elif permissionLevel < 5:
@@ -130,23 +124,14 @@ def login_menu():
                             print()
                             login.setLoginStatus(False)
                         else:
-                            print("Input must be an integer between (0-1)")
-                            time.sleep(3)
-                    
+                            print("An error occurred: Input must be an integer between (0-1)")
             loginMenuValid = False
-            
-                        
-                        
-            
-                
         # If the User has chosen to exit the program, the program will close    
         elif choice == "0":
             loginMenuValid = True
-            break
-            
+            break   
         else:
-            print("Error! Input must be an integer (0-1)")
-            time.sleep(3)
+            print("An error occurred: Input must be an integer (0-1)")
             
     # Committing all changes to the database
     connection.commit()
@@ -172,23 +157,23 @@ def amendClientInformation():
             fieldToModify = input("Select an attribute to modify: ")
             if fieldToModify == "clientID":
                 print()
-                print(f"{fieldToModify} is the primary key, this cannot be modified")
+                print(f"An error occurred: {fieldToModify} is the primary key, this cannot be modified")
                 
                 
             elif attributeNameMatchClientColumnName(cursor, fieldToModify):
                 replacementValue = input("Input the replacement value: ")
                 if compareDatatypes(cursor, replacementValue, "clients", fieldToModify):
+                    # if fieldToModify ==
                     replaceAttribute(cursor, "clients", fieldToModify, replacementValue, "clientID", iDofClientToAmend)
                     print()
                     print("Attribute amended successfully")
-                    time.sleep(2)
                     ammendOptionValid = True
                 else:               
-                    print(f"The datatype of {replacementValue} does not match the datatype of that field")
+                    print(f"An error occurred: The datatype of {replacementValue} does not match the datatype of that field")
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToAmend) == False:
-            print(f"{iDofClientToAmend} does not exist as a clientID in the clients table")
+            print(f"An error occurred: {iDofClientToAmend} does not exist as a clientID in the clients table")
         else:
-            print(f"{iDofClientToAmend} is an invalid clientID! A clientID must be an integer")
+            print(f"An error occurred: {iDofClientToAmend} is an invalid clientID! A clientID must be an integer")
        
 def addClient():
     addProcessComplete = False
@@ -268,9 +253,9 @@ def removeClient():
             removeOptionValid = True
             removeRecord(cursor, "clients", "clientID", iDofClientToRemove)
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToRemove) == False:
-            print(f"{iDofClientToRemove} does not exist as a clientID in the clients table")
+            print(f"An error occurred: {iDofClientToRemove} does not exist as a clientID in the clients table")
         else:
-            print(f"{iDofClientToRemove} is an invalid clientID! A clientID must be an integer")
+            print(f"An error occurred: {iDofClientToRemove} is an invalid clientID! A clientID must be an integer")
               
 def searchClients():
     searchOptionValid = False
@@ -289,18 +274,13 @@ def searchClients():
             if "Empty DataFrame" not in searchResults:
                 print()
                 print(searchResults)
-                time.sleep(2)
             else:
                 print()
-                print("No results match that search")
+                print("An error occurred: No results match that search")
         elif attributeNameMatchClientColumnName(cursor, attributeToSearchBy) == False:
-            print("The attribute you have selected does not exist as a column in the clients table")
+            print("An error occurred: The attribute you have selected does not exist as a column in the clients table")
         else:
-            print(f"{attributeToSearchBy} is an invalid attribute name! Enter '0' to abort")   
-
-    
-            
-       
+            print(f"An error occurred: {attributeToSearchBy} is an invalid attribute name")                
        
 def compareDatatypes(cursor, inputValue, tableName, columnName):
     columnDatatype = getColumnDataType(cursor, tableName, columnName)

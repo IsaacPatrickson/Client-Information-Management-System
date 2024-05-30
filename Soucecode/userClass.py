@@ -1,5 +1,3 @@
-import re
-
 class User():
     
     def __init__(self) -> None:
@@ -36,7 +34,7 @@ class User():
         return self._loginStatus
     
     
-def validateUserName(inputName):
+def validateUserName(re, inputName):
     # Creating a pattern using the Regular Expressions(RE) library
     # The pattern includes all letters of the alphabet (uppercase and lowercase) and blank spaces
     pattern = r'^[a-zA-Z\s]+$'
