@@ -20,7 +20,7 @@ def conntectToDatabase():
 # Login menu is the main branch of the program
 # The login process is executed 
 # and depending on the user permissions different options are presented
-def login_menu():
+def main():
     connection = conntectToDatabase()
     cursor = connection.cursor()
     # Functions that create the 'users' and the 'clients' table
@@ -191,19 +191,20 @@ def amendClientInformation(cursor):
     # A while loop that validates the user input on the amend menu
     ammendOptionValid = False
     while ammendOptionValid == False:
+        abort = False
         print()
         print()
         print("AMEND CLIENT INFORMATION")
         print()
-        print("To abort enter '0'")
+        print("To abort enter '000'")
         iDofClientToAmend = input("Enter the clientID of the details you want to amend: ")
-        if iDofClientToAmend == "0":
+        if iDofClientToAmend == "000":
             ammendOptionValid = True
             print("Amend process aborted")
         # Client ID is in the table therefore the amend process continues
         # The user should not be able to amend a record that doesn't exist
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToAmend) == True:
-            fieldToModify = input("Select an attribute to modify: ")
+            fieldToModify = input("Select an attribute to modify ('000' to abort): ")
             # ClientID cannot be modified as it is the unique identifier for each record
             if fieldToModify == "clientID":
                 print()
@@ -213,16 +214,29 @@ def amendClientInformation(cursor):
             # The system checks if this value's datatype matches the column's datatype
             # If they match the value is valid to be updated
             elif attributeNameMatchClientColumnName(cursor, fieldToModify):
-                replacementValue = input("Input the replacement value: ")
-                if compareDatatypes(cursor, replacementValue, "clients", fieldToModify):
+                replacementValue = input("Input the replacement value ('000' to abort): ")
+                if replacementValue == "000":
+                    ammendOptionValid = True
+                    print()
+                    print("Add process aborted")
+                # The answer must be 60 characters or less
+                elif len(replacementValue) > 60:
+                    print("The length of each answer must be below 60 characters")
+                elif compareDatatypes(cursor, replacementValue, "clients", fieldToModify):
                     # If the datatype is BOOLEAN the replacement value must either be '1' or '0'
                     if getColumnDataType(cursor, "clients", fieldToModify) == "BOOLEAN":
                         while replacementValue != "1" and replacementValue != "0":
-                            replacementValue = input("Replacement value for for BOOLEAN fileds must be '1' or '0': ")
-                    replaceAttribute(cursor, "clients", fieldToModify, replacementValue, "clientID", iDofClientToAmend)
-                    print()
-                    print("Attribute amended successfully")
-                    ammendOptionValid = True
+                            replacementValue = input("Replacement value for for BOOLEAN fileds must be '1' or '0' ('000' to abort): ")
+                            if replacementValue == "000":
+                                ammendOptionValid = True
+                                abort = True
+                                print()
+                                print("Add process aborted")
+                    if abort == False:            
+                        replaceAttribute(cursor, "clients", fieldToModify, replacementValue, "clientID", iDofClientToAmend)
+                        print()
+                        print("Attribute amended successfully")
+                        ammendOptionValid = True
                 else:               
                     print(f"An error occurred: The datatype of {replacementValue} does not match the datatype of that field")
         elif checkIfInputInTable(cursor, "clientID", "clients", iDofClientToAmend) == False:
@@ -409,19 +423,18 @@ def compareDatatypes(cursor, inputValue, tableName, columnName):
     else:
         return False               
                    
-def detectAndConvertInput(inputValue):
-    try:            
-        # Tries to convert the input to an integer
-        convertedValue = int(inputValue)
-        return convertedValue
+def detectAndConvertInput(userInput):
+    try:
+        # Try to convert the input to a float first
+        float_value = float(userInput)
+        # Check if the float value can be represented as an integer
+        if float_value.is_integer():
+            return int(float_value)
+        else:
+            return float_value
     except ValueError:
-        # If conversion fails, try to convert to float
-        try:
-            convertedValue = float(inputValue)
-            return convertedValue
-        except ValueError:
-            # If both conversions fail, return the original input (assumed to be a string)
-            return inputValue            
+        # If conversion to float fails, return the input as a string
+        return userInput
     
 def getMethodNamesInOrder(className):
     # Uses the inspect package to inspect a class
@@ -445,6 +458,6 @@ def attributeNameMatchClientColumnName(cursor, attributeName):
             pass
     return False  
     
-login_menu()
     
-    
+if __name__ == "__main__":
+    main()
