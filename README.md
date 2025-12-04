@@ -1,3 +1,10 @@
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite&logoColor=white)
+![OOP](https://img.shields.io/badge/Architecture-OOP-green)
+![CRUD](https://img.shields.io/badge/Features-CRUD-orange)
+![Testing](https://img.shields.io/badge/Testing-pytest-blue?logo=pytest)
+![CLI](https://img.shields.io/badge/Interface-Console-lightgrey)
+
 #  **Client Information Management System (Python + SQLite)**
 
 ## 📌 Overview
