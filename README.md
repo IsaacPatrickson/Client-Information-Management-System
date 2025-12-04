@@ -131,7 +131,7 @@ These ensured requirements clarity and prevented scope creep.
 ### 1️⃣ **Clone the Repository**
 
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
+git clone https://github.com/IsaacPatrickson/client-information-management-system.git
 cd <repo-name>
 ```
 
